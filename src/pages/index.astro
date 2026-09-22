@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Hello, world" description="Personal CV website — coming soon.">
+  <header>
+    <h1>Hello, world</h1>
+    <p class="lede">This will become a CV. For now it is a working Astro page.</p>
+  </header>
+</Base>
+
+<style>
+  h1 {
+    font-size: var(--text-xl);
+    margin-block: 0 var(--space-2);
+  }
+  .lede {
+    color: var(--color-muted);
+    margin: 0;
+  }
+</style>

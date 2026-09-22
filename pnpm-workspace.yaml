@@ -1,0 +1,4 @@
+# pnpm settings (pnpm 10+ blocks dependency install scripts unless approved here).
+allowBuilds:
+  esbuild: true
+  sharp: true

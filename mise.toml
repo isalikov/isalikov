@@ -1,0 +1,31 @@
+# Toolchain for this repository, managed by mise — https://mise.jdx.dev
+# One-time setup:  mise install
+# Then just use `pnpm ...`; mise puts the right node/pnpm on PATH in this directory.
+
+[tools]
+node = "lts"      # latest Node.js LTS line (even-numbered releases, production-stable)
+pnpm = "latest"   # latest stable pnpm
+
+[settings]
+# Pin resolved versions into mise.lock so every machine gets identical toolchain versions.
+lockfile = true
+
+[tasks.install]
+description = "Install dependencies"
+run = "pnpm install --frozen-lockfile"
+
+[tasks.check]
+description = "Typecheck — the only verification AI agents may run"
+run = "pnpm astro check"
+
+[tasks.dev]
+description = "Dev server (owner only; agents never run this)"
+run = "pnpm astro dev"
+
+[tasks.preview]
+description = "Preview the production build (owner only)"
+run = "pnpm astro preview"
+
+[tasks.build]
+description = "Production build (owner only; agents never run this)"
+run = "pnpm astro build"

@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# mise (local overrides only; mise.toml and mise.lock are committed)
+mise.local.toml
+.mise.local.toml
+
+# Astro
+.astro/

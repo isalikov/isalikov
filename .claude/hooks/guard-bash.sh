@@ -51,32 +51,41 @@ if printf '%s' "$norm" | grep -Eq "${W}git([[:space:]]|$)"; then
   deny "Rule 1: git commands are never run by Claude. The owner handles version control. Suggest a commit message instead."
 fi
 
-# Allowed verification: astro check / tsc --noEmit / typecheck scripts. Let these through before build/test checks.
-if printf '%s' "$norm" | grep -Eq "${W}(npx |pnpm |bunx |yarn )?astro check" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npx |pnpm |bunx |yarn )?tsc([[:space:]]|$)" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npm|pnpm|yarn|bun) (run )?(check|typecheck|type-check|lint)([[:space:]]|$)"; then
+# Runner prefixes that may precede a tool binary.
+P='(pnpm exec |pnpm dlx |npx |pnpm |bunx |yarn )?'
+# mise task runner: `mise run <task>` / `mise r <task>` (task names may be given as //task or with args).
+M="${W}mise (run|r) (//)?"
+
+# Allowed verification: astro check / tsc --noEmit / typecheck scripts / mise check task.
+if printf '%s' "$norm" | grep -Eq "${W}${P}astro check" \
+  || printf '%s' "$norm" | grep -Eq "${W}${P}tsc([[:space:]]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${W}(npm|pnpm|yarn|bun) (run )?(check|typecheck|type-check|lint)([[:space:]]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${M}(check|typecheck|type-check|lint)([[:space:]]|$)"; then
   exit 0
 fi
 
 # 2) dev server / preview.
-if printf '%s' "$norm" | grep -Eq "${W}(npx |pnpm |bunx |yarn )?astro (dev|preview)([[:space:]]|$)" \
+if printf '%s' "$norm" | grep -Eq "${W}${P}astro (dev|preview)([[:space:]]|$)" \
   || printf '%s' "$norm" | grep -Eq "${W}(npm|pnpm|yarn|bun) (run )?(dev|start|preview|serve)([[:space:]]|$)" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npx )?vite([[:space:]]|$)" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npx )?vite (dev|preview|serve)([[:space:]]|$)"; then
-  deny "Rule 4: the dev server is never started by Claude. Ask the owner to run it and report what they see."
+  || printf '%s' "$norm" | grep -Eq "${M}(dev|start|preview|serve)([[:space:]]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${W}${P}vite([[:space:]]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${W}${P}vite (dev|preview|serve)([[:space:]]|$)"; then
+  deny "Rule 4: the dev server is never started by Claude. Ask the owner to run it (mise run dev) and report what they see."
 fi
 
 # 3) build.
-if printf '%s' "$norm" | grep -Eq "${W}(npx |pnpm |bunx |yarn )?astro build([[:space:]]|$)" \
+if printf '%s' "$norm" | grep -Eq "${W}${P}astro build([[:space:]]|$)" \
   || printf '%s' "$norm" | grep -Eq "${W}(npm|pnpm|yarn|bun) (run )?build([[:space:]:]|$)" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npx )?vite build([[:space:]]|$)"; then
-  deny "Rule 3: build commands are never run by Claude. Only typecheck is allowed: npx astro check / npx tsc --noEmit."
+  || printf '%s' "$norm" | grep -Eq "${M}build([[:space:]:]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${W}${P}vite build([[:space:]]|$)"; then
+  deny "Rule 3: build commands are never run by Claude. Only typecheck is allowed: mise run check / pnpm astro check / pnpm tsc --noEmit."
 fi
 
 # 3) test.
 if printf '%s' "$norm" | grep -Eq "${W}(npm|pnpm|yarn|bun) (run )?(test|tests|e2e|test:[a-z0-9_-]+)([[:space:]]|$)" \
-  || printf '%s' "$norm" | grep -Eq "${W}(npx |pnpm |bunx |yarn )?(vitest|jest|playwright|mocha|ava|cypress)([[:space:]]|$)"; then
-  deny "Rule 3: test commands are never run by Claude. Only typecheck is allowed: npx astro check / npx tsc --noEmit."
+  || printf '%s' "$norm" | grep -Eq "${M}(test|tests|e2e|test:[a-z0-9_-]+)([[:space:]]|$)" \
+  || printf '%s' "$norm" | grep -Eq "${W}${P}(vitest|jest|playwright|mocha|ava|cypress)([[:space:]]|$)"; then
+  deny "Rule 3: test commands are never run by Claude. Only typecheck is allowed: mise run check / pnpm astro check / pnpm tsc --noEmit."
 fi
 
 exit 0

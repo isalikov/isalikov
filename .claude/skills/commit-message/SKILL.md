@@ -5,8 +5,15 @@ description: Produce the Conventional Commits message for the changes made in th
 
 # Commit message
 
-You cannot inspect the working tree with git. Work from the files you created or edited in this
-conversation. If you are unsure whether something changed, say so rather than guess.
+The message must describe **all uncommitted changes in the working tree**, not only the last step.
+You cannot inspect the working tree with git, so assemble the set from:
+
+1. every file you created or edited during this session (all turns, not just the latest);
+2. files reported as untracked or modified in the status snapshot at session start;
+3. files you saw on disk that are not part of the last known commit.
+
+List the files you believe are uncommitted above the message so the owner can correct the set.
+If you are unsure whether something changed, say so rather than guess.
 
 ## Format
 

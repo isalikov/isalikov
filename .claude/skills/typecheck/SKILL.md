@@ -9,21 +9,22 @@ Build, test and dev-server commands are blocked by hooks. This is the one verifi
 
 ## Run
 
-Pick the package manager from the lockfile in the repo root:
+Node and pnpm are managed by mise (`mise.toml`), so the toolchain is already on PATH inside
+the repo. Run the mise task:
 
-| lockfile                 | command             |
-|--------------------------|---------------------|
-| `package-lock.json`      | `npx astro check`   |
-| `pnpm-lock.yaml`         | `pnpm astro check`  |
-| `bun.lockb` / `bun.lock` | `bunx astro check`  |
-| `yarn.lock`              | `yarn astro check`  |
+```
+mise run check
+```
 
-If `package.json` has a `check` or `typecheck` script, prefer it (`npm run check`).
+It executes `pnpm astro check`. If mise is not active in the shell, `pnpm astro check` directly
+is equivalent. Never use `npm`, `npx`, `yarn` or `bun`.
+
 If `@astrojs/check` is not installed, `astro check` will say so; report that and stop —
-do not install packages unless the owner asks.
+do not install packages unless the owner asks. If `node_modules` is missing, tell the owner to
+run `mise install && mise run install`; do not run installs yourself.
 
 For non-Astro TypeScript files only (`src/data/*.ts`, utilities), you may additionally run
-`npx tsc --noEmit -p tsconfig.json`.
+`pnpm tsc --noEmit -p tsconfig.json`.
 
 Use a timeout of at least 120 s; the first run downloads the language server.
 

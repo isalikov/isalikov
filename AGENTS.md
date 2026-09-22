@@ -12,13 +12,16 @@ experience, skills, education, contacts. Static output, content-first, fast, pri
 1. **Never run git commands.** No status, add, commit, diff, log, push, nothing.
    The owner handles all version control by hand.
 2. **After every code change, end the reply with a suggested commit message.**
+   The message must cover **all uncommitted changes in the working tree**, not just the last step:
+   everything edited or created during the session plus files already untracked or modified
+   when the session started (agents cannot run git, so keep track as you go).
    Format: Conventional Commits (`feat:`, `fix:`, `style:`, `refactor:`, `content:`, `chore:`, `docs:`).
    One-line subject (≤ 72 chars), optional short body. Put it in a fenced code block under
    a line that says `Suggested commit:`.
 3. **Never run build or test commands.** No `astro build`, `npm run build`, `vitest`, `playwright`, etc.
-   The only verification allowed is **typecheck**: `npx astro check` and/or `npx tsc --noEmit`
-   (or the `check` / `typecheck` script from `package.json`).
-4. **Never start the dev server.** No `astro dev`, `astro preview`, `npm run dev`, `npm start`.
+   The only verification allowed is **typecheck**: `mise run check` (= `pnpm astro check`)
+   and/or `pnpm tsc --noEmit`.
+4. **Never start the dev server.** No `astro dev`, `astro preview`, `pnpm dev`, `mise run dev`, `mise run preview`.
    The owner runs it locally and reports what they see. Instead, tell the owner exactly what
    route, viewport or print preview to look at and what "correct" looks like.
 
@@ -28,8 +31,9 @@ to check and ask the owner to run it.
 ## Stack & conventions
 
 - Astro (latest stable), TypeScript strict, static output (`output: 'static'`).
-- Package manager: check the lockfile in the repo root before choosing `npm`/`pnpm`/`bun`/`yarn`.
-  Do not install packages unless the owner asks.
+- Toolchain: Node.js (latest LTS) and pnpm (latest) are managed by [mise](https://mise.jdx.dev)
+  via `mise.toml`; resolved versions are pinned in `mise.lock`. Run `mise install` once.
+  Use `pnpm` for everything; never `npm`, `yarn`, `bun` or `npx`. Do not install packages unless the owner asks.
 - CV data lives in content collections (`src/content/`) or typed data files (`src/data/`),
   never hard-coded inside components. Components render data; they do not own it.
 - Zero client-side JavaScript by default. Add a framework island only when interaction truly
