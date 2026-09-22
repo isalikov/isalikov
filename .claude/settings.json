@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npx astro check*)",
+      "Bash(npx tsc --noEmit*)",
+      "Bash(npm run check*)",
+      "Bash(npm run typecheck*)",
+      "Bash(pnpm astro check*)",
+      "Bash(pnpm tsc --noEmit*)",
+      "Bash(pnpm check*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(bunx astro check*)",
+      "Bash(bun run check*)",
+      "Bash(ls*)",
+      "Bash(cat*)",
+      "Bash(find*)",
+      "Bash(grep*)",
+      "Bash(rg*)",
+      "Bash(head*)",
+      "Bash(tail*)",
+      "Bash(wc*)",
+      "Bash(tree*)",
+      "Read",
+      "Glob",
+      "Grep",
+      "WebFetch(domain:docs.astro.build)",
+      "WebFetch(domain:astro.build)"
+    ],
+    "deny": [
+      "Bash(git *)",
+      "Bash(git)",
+      "Bash(npm run build*)",
+      "Bash(npm run dev*)",
+      "Bash(npm run preview*)",
+      "Bash(npm start*)",
+      "Bash(npm test*)",
+      "Bash(npm run test*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm preview*)",
+      "Bash(pnpm start*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm run build*)",
+      "Bash(pnpm run dev*)",
+      "Bash(pnpm run test*)",
+      "Bash(yarn build*)",
+      "Bash(yarn dev*)",
+      "Bash(yarn start*)",
+      "Bash(yarn test*)",
+      "Bash(bun run build*)",
+      "Bash(bun run dev*)",
+      "Bash(bun run test*)",
+      "Bash(bun test*)",
+      "Bash(npx astro build*)",
+      "Bash(npx astro dev*)",
+      "Bash(npx astro preview*)",
+      "Bash(astro build*)",
+      "Bash(astro dev*)",
+      "Bash(astro preview*)",
+      "Bash(npx vitest*)",
+      "Bash(npx playwright*)",
+      "Bash(vitest*)",
+      "Bash(playwright*)",
+      "Edit(.git/**)"
+    ]
+  },
+  "includeGitInstructions": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.sh",
+            "timeout": 10,
+            "statusMessage": "Checking command against project rules"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/mark-changed.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/require-commit-message.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for suggested commit message"
+          }
+        ]
+      }
+    ]
+  }
+}
